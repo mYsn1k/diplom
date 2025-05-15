@@ -31,10 +31,19 @@
      dest: /var/www/html/joomla
      remote_src: yes
 
-#  - name: copy joomla.conf
- #   ansible.builtin.copy:
-  #   src: /git/cprd-inf-joomla01/joomla.conf
-   #  dest: /etc/apache2/sites-available/000-default.conf
+  - name: copy joomla.conf to cprd-inf-joomla01
+    ansible.builtin.copy:
+     src: /git/cprd-inf-joomla01/joomla.conf
+     dest: /etc/apache2/sites-available/000-default.conf
+    when: ansible_hostname == "cprd-inf-joomla01"
+
+
+  - name: copy joomla.conf to cprd-inf-joomla02
+    ansible.builtin.copy:
+     src: /git/cprd-inf-joomla02/joomla.conf
+     dest: /etc/apache2/sites-available/000-default.conf
+    when: ansible_hostname == "cprd-inf-joomla02"
+
 
 
   - name: Restart apache2

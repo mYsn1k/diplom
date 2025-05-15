@@ -19,8 +19,8 @@
 # Default server configuration
 #
 upstream backend {
-server owa.otus.int weight=3;
-server google.ru;
+server cprd-inf-joomla01:443 max_fails=3 fail_timeout=10s;
+server cprd-inf-joomla02:443 max_fails=3 fail_timeout=10s;
 }
 
 
@@ -59,7 +59,7 @@ server {
                 # as directory, then fall back to displaying a 404.
         #       try_files $uri $uri/ =404;
 
-proxy_pass http://backend;
+proxy_pass https://backend;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Real-IP $remote_addr;
