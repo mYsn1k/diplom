@@ -1,0 +1,43 @@
+
+---
+
+
+- name: kibana config
+  hosts: cprd-inf-kib01
+
+  tasks:
+
+
+
+  - name: copy kibana config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-kib01/kibana.yml
+     dest: /etc/kibana/kibana.yml
+     mode: '0660'
+     owner: root
+     group: kibana
+
+
+  - name: add kibana to auto
+    ansible.builtin.shell: systemctl enable --now kibana.service
+
+
+  - name: Restart kibana
+    ansible.builtin.systemd_service:
+     name: kibana
+     state: restarted
+
+
+
+  - name: kibana restart timer 60 sec
+    ansible.builtin.shell: "sleep 60"
+
+
+  - name: copy kibana objects njson
+    ansible.builtin.copy:
+     src: /git/cprd-inf-kib01/export.ndjson
+     dest: /tmp/
+
+
+  - name: Restore kibana objects
+    ansible.builtin.shell: "curl -XPOST 'https://cprd-inf-kib01.otus.int:5601/api/saved_objects/_import?overwrite=true' -H 'kbn-xsrf: true' --form 'file=@/tmp/export.ndjson' -H 'kbn-xsrf: true'"

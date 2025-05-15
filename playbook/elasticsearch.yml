@@ -1,0 +1,32 @@
+
+
+---
+
+
+- name: elasticsearch config
+  hosts: cprd-inf-elas01
+
+  tasks:
+
+  - name: copy java config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-elas01/jvm.options
+     dest: /etc/elasticsearch/jvm.options.d/jvm.options
+
+  - name: copy elasticsearch config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-elas01/elasticsearch.yml
+     dest: /etc/elasticsearch/elasticsearch.yml
+     mode: '0660'
+     owner: root
+     group: elasticsearch
+
+
+  - name: add elasticsearch to auto
+    ansible.builtin.shell: systemctl enable --now elasticsearch.service
+
+
+  - name: Restart elasticsearch
+    ansible.builtin.systemd_service:
+     name: elasticsearch
+     state: restarted

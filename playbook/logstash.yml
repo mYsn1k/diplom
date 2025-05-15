@@ -1,0 +1,29 @@
+---
+
+
+- name: logstash config
+  hosts: cprd-inf-log01
+
+  tasks:
+
+
+
+  - name: copy logstash config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-log01/logstash.yml
+     dest: /etc/logstash.yml
+
+  - name: copy nginx elasticsearch config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-log01/logstash.conf
+     dest: /etc/logstash/conf.d/logstash-nginx-es.conf
+
+
+  - name: add logstash to auto
+    ansible.builtin.shell: systemctl enable --now logstash.service
+
+
+  - name: Restart logstash
+    ansible.builtin.systemd_service:
+     name: logstash
+     state: restarted

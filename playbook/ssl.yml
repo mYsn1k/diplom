@@ -1,0 +1,20 @@
+---
+- name: ssl cert distrib
+  hosts: all
+
+  tasks:
+
+
+  - name: copy ssl certs
+    ansible.builtin.copy:
+     src: /git/ssl/
+     dest: /etc/ssl/
+
+  - name: install root cert
+    ansible.builtin.copy:
+     src: /git/ssl/otus.crt
+     dest: /usr/local/share/ca-certificates
+
+  - name: update ca certs
+    ansible.builtin.shell: update-ca-certificates
+
