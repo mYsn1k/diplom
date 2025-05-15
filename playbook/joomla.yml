@@ -1,0 +1,48 @@
+---
+- name: joomla install
+  hosts: joomla
+
+  tasks:
+
+
+  - name: copy ssl certs
+    ansible.builtin.copy:
+     src: /git/ssl/
+     dest: /etc/ssl/
+
+
+  - name: create joomla directory
+    ansible.builtin.file:
+     path: /var/www/html/joomla
+     state: directory
+     mode: '0755'
+     owner: www-data
+     group: www-data
+
+
+  - name: copy joomla site
+    ansible.builtin.copy:
+     src: /git/cprd-inf-joomla01/joomla_site.zip
+     dest: /tmp/joomla_site.zip
+
+  - name: Unzip joomla site
+    ansible.builtin.unarchive:
+     src: /tmp/joomla_site.zip
+     dest: /var/www/html/joomla
+     remote_src: yes
+
+#  - name: copy joomla.conf
+ #   ansible.builtin.copy:
+  #   src: /git/cprd-inf-joomla01/joomla.conf
+   #  dest: /etc/apache2/sites-available/000-default.conf
+
+
+  - name: Restart apache2
+    ansible.builtin.systemd_service:
+     name: apache2
+     state: restarted
+
+  - name: delete temp files
+    ansible.builtin.file:
+     path: /tmp/joomla_site.zip
+     state: absent

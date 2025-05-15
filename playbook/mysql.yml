@@ -1,0 +1,97 @@
+---
+
+- name: mysql restore last backup
+  hosts: 127.0.0.1, joomla, sql
+  vars:
+   path_backup: /git/cprd-inf-mysql01/backups
+   file_restore: /tmp/last_dump.sql
+
+  tasks:
+
+   - name: copy mysql conf to cprd-inf-mysql01
+     ansible.builtin.copy:
+      src: /git/cprd-inf-mysql01/mysql_master_mysqld.cnf
+      dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+     when: ansible_hostname == "cprd-inf-mysql01"
+
+   - name: copy mysql conf to cprd-inf-mysql02
+     ansible.builtin.copy:
+      src: /git/cprd-inf-mysql02/mysql_slave_mysqld.cnf
+      dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+     when: ansible_hostname == "cprd-inf-mysql02"
+
+   - name: Get backups in git folder
+     ansible.builtin.shell: "scp -o StrictHostKeyChecking=no `find {{ path_backup }} -type f | tail -1` administrator@cprd-inf-mysql01:{{ file_restore }}"
+     when: ansible_hostname == "cprd-inf-mgmt01"
+
+
+   - name: sleep timer
+     ansible.builtin.pause:
+      seconds: 3
+
+
+   - name: Create master replica
+     ansible.builtin.shell: " {{ item }}"
+     loop:
+        - systemctl restart mysql
+        - sleep 10
+        - mysql -e "CREATE USER repl@'%' IDENTIFIED WITH 'caching_sha2_password' BY '123password';"
+        - sleep 2
+        - mysql -e "GRANT REPLICATION SLAVE ON *.* TO repl@'%';"
+        - sleep 2
+        - mysql -e "FLUSH PRIVILEGES;"
+     when: ansible_hostname == "cprd-inf-mysql01"
+
+   - name: Make slave replica
+     ansible.builtin.shell: " {{ item }}"
+     loop:
+        - systemctl restart mysql
+        - sleep 10
+        - mysql -e "STOP REPLICA;"
+        - sleep 2
+        - mysql -e "CHANGE REPLICATION SOURCE TO SOURCE_HOST='cprd-inf-mysql01', SOURCE_USER='repl', SOURCE_PASSWORD='123password', SOURCE_AUTO_POSITION = 1, GET_SOURCE_PUBLIC_KEY = 1;"
+        - sleep 2
+        - mysql -e "START REPLICA;"
+     when: ansible_hostname == "cprd-inf-mysql02"
+
+
+
+   - name: Create joomla DB
+     ansible.builtin.shell: " {{ item }}"
+     loop:
+        - mysql -e "CREATE DATABASE joomla_db;"
+        - sleep 2
+        - mysql -e "CREATE USER 'joomla_user'@'%' IDENTIFIED BY 'password123';"
+        - sleep 2
+        - mysql -e "GRANT ALL ON joomla_db.* TO 'joomla_user'@'%';"
+        - sleep 2
+        - mysql -e "FLUSH PRIVILEGES;"
+     when: ansible_hostname == "cprd-inf-mysql01"
+
+
+   - name: sleep timer
+     ansible.builtin.pause:
+      seconds: 3
+
+   - name: Restore dump to main sql
+     ansible.builtin.shell: "mysql joomla_db < {{ file_restore }}"
+     when: ansible_hostname == "cprd-inf-mysql01"
+
+
+
+   - name: sleep timer
+     ansible.builtin.pause:
+      seconds: 3
+
+
+   - name: Delete last_dump.sql
+     ansible.builtin.shell: "rm -rf /tmp/last*"
+     when: ansible_hostname == "cprd-inf-mysql01"
+
+
+   - name: Restart apache2 on Joomla
+     ansible.builtin.systemd_service:
+      name: apache2
+      state: restarted
+     when: ansible_hostname == "joomla"
+

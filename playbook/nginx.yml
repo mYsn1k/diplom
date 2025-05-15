@@ -1,0 +1,42 @@
+---
+
+
+- name: nginx config + keepalived
+  hosts: web
+
+  tasks:
+
+  - name: copy nginx config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-nginx01/default
+     dest: /etc/nginx/sites-available/default
+
+  - name: copy ssl certs
+    ansible.builtin.copy:
+     src: /git/ssl/
+     dest: /etc/ssl/
+
+  - name: Restart nginx
+    ansible.builtin.systemd_service:
+     name: nginx
+     state: restarted
+
+  - name: copy keepalived config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-nginx01/keepalived.conf
+     dest: /etc/keepalived/keepalived.conf
+    delegate_to: cprd-inf-nginx01
+
+  - name: copy keepalived config
+    ansible.builtin.copy:
+     src: /git/cprd-inf-nginx02/keepalived.conf
+     dest: /etc/keepalived/keepalived.conf
+    delegate_to: cprd-inf-nginx02
+
+  - name: Restart keepalived
+    ansible.builtin.systemd_service:
+     name: keepalived
+     state: restarted
+
+
+
