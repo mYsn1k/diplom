@@ -1,0 +1,24 @@
+---
+#Install ssh pub key to inventiry hosts
+
+- name: public ssh key install to hosts
+  hosts: 127.0.0.1
+
+
+
+  tasks:
+
+  - name: copy ansible  ssh key to hosts
+    ansible.builtin.shell: sshpass -p Sberins2024! ssh-copy-id -o StrictHostKeyChecking=no -i /root/.ssh/id_ed25519.pub  administrator@"{{ item }}".otus.int
+    loop:
+        - cprd-inf-nginx01
+        - cprd-inf-nginx02
+        - cprd-inf-joomla01
+        - cprd-inf-joomla02
+        - cprd-inf-mysql01
+        - cprd-inf-mysql02
+        - cprd-inf-log01
+        - cprd-inf-prom01
+        - cprd-inf-elas01
+        - cprd-inf-kib01
+        - cprd-inf-graf01

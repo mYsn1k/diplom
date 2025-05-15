@@ -1,0 +1,12 @@
+---
+#Test ansible ping to hosts
+
+- name: Ansible ping to hosts
+  hosts: all
+
+
+
+  tasks:
+
+  - name: ansible ping to hosts
+    ansible.builtin.ping:
