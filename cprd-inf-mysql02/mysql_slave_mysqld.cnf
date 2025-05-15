@@ -12,6 +12,13 @@
 # The following values assume you have at least 32M ram
 
 [mysqld]
+
+ssl
+ssl-ca=/etc/ssl/otus-ca.pem
+ssl-cert=/etc/ssl/otus.pem
+ssl-key=/etc/ssl/otus-key.pem
+
+
 #
 # * Basic Settings
 #

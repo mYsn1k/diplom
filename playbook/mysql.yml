@@ -1,12 +1,19 @@
 ---
 
 - name: mysql restore last backup
-  hosts: 127.0.0.1, joomla, sql
+  hosts: 127.0.0.1, sql
   vars:
    path_backup: /git/cprd-inf-mysql01/backups
    file_restore: /tmp/last_dump.sql
 
   tasks:
+
+   - name: copy ssl certs
+     ansible.builtin.copy:
+      src: /git/ssl/
+      dest: /etc/ssl/
+     when: inventory_hostname in groups['sql']
+
 
    - name: copy mysql conf to cprd-inf-mysql01
      ansible.builtin.copy:
