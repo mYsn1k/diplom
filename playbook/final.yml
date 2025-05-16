@@ -1,6 +1,6 @@
 ---
 
-- import_playbook: ssh_key_ansible.yml
+- import_playbook: ssh_key.ansible.yml
 - import_playbook: ssh_ping.ansible.yml
 - import_playbook: ssl.yml
 - import_playbook: nginx.yml
@@ -8,7 +8,7 @@
 - import_playbook: mysql.yml
 - import_playbook: filebeat.yml
 - import_playbook: logstash.yml
-- import_playbook: elasticseacrh.yml
+- import_playbook: elasticsearch.yml
 - import_playbook: kibana.yml
 - import_playbook: prometheus.yml
 - import_playbook: grafana.yml

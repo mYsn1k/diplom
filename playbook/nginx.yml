@@ -25,13 +25,13 @@
     ansible.builtin.copy:
      src: /git/cprd-inf-nginx01/keepalived.conf
      dest: /etc/keepalived/keepalived.conf
-    delegate_to: cprd-inf-nginx01
+    when: ansible_hostname == "cprd-inf-nginx01"
 
   - name: copy keepalived config
     ansible.builtin.copy:
      src: /git/cprd-inf-nginx02/keepalived.conf
      dest: /etc/keepalived/keepalived.conf
-    delegate_to: cprd-inf-nginx02
+    when: ansible_hostname == "cprd-inf-nginx02"
 
   - name: Restart keepalived
     ansible.builtin.systemd_service:
