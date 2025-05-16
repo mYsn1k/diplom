@@ -29,8 +29,8 @@
 
 
 
-  - name: kibana restart timer 60 sec
-    ansible.builtin.shell: "sleep 60"
+  - name: kibana restart timer 120 sec
+    ansible.builtin.shell: "sleep 120"
 
 
   - name: copy kibana objects njson
