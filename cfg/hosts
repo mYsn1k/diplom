@@ -1,0 +1,20 @@
+[web]
+cprd-inf-nginx01 ansible_host=cprd-inf-nginx01.otus.int
+cprd-inf-nginx02 ansible_host=cprd-inf-nginx02.otus.int
+
+[sql]
+cprd-inf-mysql01 ansible_host=cprd-inf-mysql01.otus.int
+cprd-inf-mysql02 ansible_host=cprd-inf-mysql02.otus.int
+
+[joomla]
+cprd-inf-joomla01 ansible_host=cprd-inf-joomla01.otus.int
+cprd-inf-joomla02 ansible_host=cprd-inf-joomla02.otus.int
+
+[mon]
+cprd-inf-prom01 ansible_host=cprd-inf-prom01.otus.int
+cprd-inf-graf01 ansible_host=cprd-inf-graf01.otus.int
+
+[elk]
+cprd-inf-elas01 ansible_host=cprd-inf-elas01.otus.int
+cprd-inf-log01 ansible_host=cprd-inf-log01.otus.int
+cprd-inf-kib01 ansible_host=cprd-inf-kib01.otus.int
